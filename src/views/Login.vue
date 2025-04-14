@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import { User } from "@/service/user.js";
+import {useUserStore} from "@/stores/user.js";
+import router from "@/router/index.js";
 
 const formData = ref({
   email: '',
@@ -15,6 +17,8 @@ const errors = ref({
 
 const showPassword = ref(false);
 const isSubmitting = ref(false);
+
+const userStore = useUserStore()
 
 const validateField = (field, value) => {
   switch(field) {
@@ -46,8 +50,9 @@ const handleSubmit = async () => {
       const userService = new User();
       const response = await userService.login(form);
 
-      console.log('Connexion réussie:', response);
-      // Redirection ou traitement après connexion...
+      userStore.setInfo(response)
+
+      await router.push({name: 'home'})
 
     } catch (error) {
       console.error('Échec de la connexion:', error);
@@ -124,9 +129,9 @@ const togglePasswordVisibility = () => {
             />
             <label class="label-text text-base" for="rememberMe">Se souvenir de moi</label>
           </div>
-          <router-link to="/mot-de-passe-oublie" class="text-sm link link-primary">
-            Mot de passe oublié ?
-          </router-link>
+<!--          <router-link to="/mot-de-passe-oublie" class="text-sm link link-primary">-->
+<!--            Mot de passe oublié ?-->
+<!--          </router-link>-->
         </div>
 
         <div class="mt-4">
